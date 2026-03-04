@@ -6,7 +6,7 @@
 #include <iostream>
 
 
-#ifdef __NVCC__
+#ifdef __CUDA_ARCH__
 #   define FCT_DECORATOR __host__ __device__
 #else
 #   define FCT_DECORATOR
