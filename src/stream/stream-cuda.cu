@@ -9,6 +9,6 @@ __global__ void _k_stream(const double *const __restrict__ src, double *__restri
     }
 }
 
-void stream(const double *const __restrict__ src, double *__restrict__ dest, size_t nx, size_t block_size) {
-    _k_stream<<<ceilingDivide(nx, block_size), block_size>>>(src, dest, nx);
+void stream(const double *const __restrict__ src, double *__restrict__ dest, size_t nx, size_t blocks, size_t block_size) {
+    _k_stream<<<blocks, block_size>>>(src, dest, nx);
 }

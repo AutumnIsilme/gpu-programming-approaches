@@ -33,9 +33,9 @@ int main(int argc, char *argv[]) {
 
     // warm-up
     for (size_t i = 0; i < nItWarmUp; ++i) {
-        stencil2d(u, uNew, nx, ny, blocks_x, blocks_y, BLOCK_SIZE_X, BLOCK_SIZE_Y);
-        std::swap(u, uNew);
-        cudaDeviceSynchronize();
+        stencil2d(_ku, _kuNew, nx, ny, blocks_x, blocks_y, BLOCK_SIZE_X, BLOCK_SIZE_Y);
+        std::swap(_ku, _kuNew);
+        checkCudaError(cudaDeviceSynchronize(), true);
     }
     //checkCudaError(cudaDeviceSynchronize());
 
@@ -43,9 +43,9 @@ int main(int argc, char *argv[]) {
     auto start = std::chrono::steady_clock::now();
 
     for (size_t i = 0; i < nIt; ++i) {
-        stencil2d(u, uNew, nx, ny, blocks_x, blocks_y, BLOCK_SIZE_X, BLOCK_SIZE_Y);
-        std::swap(u, uNew);
-        cudaDeviceSynchronize();
+        stencil2d(_ku, _kuNew, nx, ny, blocks_x, blocks_y, BLOCK_SIZE_X, BLOCK_SIZE_Y);
+        std::swap(_ku, _kuNew);
+        checkCudaError(cudaDeviceSynchronize(), true);
     }
     //checkCudaError(cudaDeviceSynchronize());
     auto end = std::chrono::steady_clock::now();
@@ -53,8 +53,8 @@ int main(int argc, char *argv[]) {
     printStats(end - start, nIt, nx * ny, sizeof(double) + sizeof(double), 7);
 
     // check solution
-    cudaMemcpy(u, _ku, bytes, cudaMemcpyDeviceToHost);
-    cudaMemcpy(uNew, _kuNew, bytes, cudaMemcpyDeviceToHost);
+    checkCudaError(cudaMemcpy(u, _ku, bytes, cudaMemcpyDeviceToHost), true);
+    checkCudaError(cudaMemcpy(uNew, _kuNew, bytes, cudaMemcpyDeviceToHost), true);
 
     checkSolutionStencil2D(u, uNew, nx, ny, nIt + nItWarmUp);
 
